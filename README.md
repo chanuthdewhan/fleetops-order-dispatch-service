@@ -1,3 +1,3 @@
-# FleetOps — Order Dispatch Service
+# FleetOps - Order Dispatch Service
 
 Manages customers, drivers, vehicles, orders and assignments.
