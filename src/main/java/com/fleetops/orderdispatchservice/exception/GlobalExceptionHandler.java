@@ -35,6 +35,18 @@ public class GlobalExceptionHandler {
         return problemResponse(HttpStatus.CONFLICT, "Invalid Operation", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ProblemDetail> handleDuplicate(DuplicateResourceException ex, HttpServletRequest request) {
+        log.warn("Duplicate resource: {}", ex.getMessage());
+        return problemResponse(HttpStatus.CONFLICT, "Duplicate Resource", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidCredentials(InvalidCredentialsException ex, HttpServletRequest request) {
+        log.warn("Failed login attempt on [{}]", request.getRequestURI());
+        return problemResponse(HttpStatus.UNAUTHORIZED, "Invalid Credentials", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ProblemDetail> handleBindException(
             BindException ex, HttpServletRequest request) {
