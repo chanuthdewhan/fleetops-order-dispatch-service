@@ -65,6 +65,14 @@ public class GlobalExceptionHandler {
         return problemResponse(HttpStatus.UNPROCESSABLE_ENTITY, "Validation Error", detail, request);
     }
 
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ProblemDetail> handleTypeMismatch(
+            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        String detail = String.format("Invalid value '%s' for parameter '%s'", ex.getValue(), ex.getName());
+        log.warn("Type mismatch on [{}]: {}", request.getRequestURI(), detail);
+        return problemResponse(HttpStatus.BAD_REQUEST, "Invalid Request Parameter", detail, request);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleGeneric(
             Exception ex, HttpServletRequest request) {
