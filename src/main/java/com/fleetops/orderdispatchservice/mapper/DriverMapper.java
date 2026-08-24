@@ -8,5 +8,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface DriverMapper {
     Driver toEntity(DriverRequest request);
-    DriverResponse toResponse(DriverRequest customer);
+    DriverResponse toResponse(Driver driver);
 }
