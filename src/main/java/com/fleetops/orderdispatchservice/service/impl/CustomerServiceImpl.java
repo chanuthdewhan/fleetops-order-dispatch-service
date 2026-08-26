@@ -44,4 +44,17 @@ public class CustomerServiceImpl implements CustomerService {
     public List<CustomerResponse> getAllCustomers() {
         return customerRepository.findAll().stream().map(customerMapper::toResponse).toList();
     }
+
+    @Override
+    @Transactional
+    public CustomerResponse updateCustomer(Long id, CustomerRequest request) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found: " + id));
+        customer.setName(request.getName());
+        customer.setPhone(request.getPhone());
+        customer.setEmail(request.getEmail());
+        customer.setAddress(request.getAddress());
+        log.info("Customer updated: id={}", id);
+        return customerMapper.toResponse(customer);
+    }
 }
