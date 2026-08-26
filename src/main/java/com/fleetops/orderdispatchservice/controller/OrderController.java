@@ -7,11 +7,11 @@ import com.fleetops.orderdispatchservice.enums.OrderStatus;
 import com.fleetops.orderdispatchservice.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -31,9 +31,11 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> getOrders(
-            @RequestParam(required = false) OrderStatus status) {
-        return ResponseEntity.ok(orderService.getOrders(status));
+    public ResponseEntity<Page<OrderResponse>> getOrders(
+            @RequestParam(required = false) OrderStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(orderService.getOrders(status, PageRequest.of(page, size)));
     }
 
     // Internal endpoint - called by trip-telemetry-service via Feign,

@@ -14,10 +14,11 @@ import com.fleetops.orderdispatchservice.repository.OrderRepository;
 import com.fleetops.orderdispatchservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -64,11 +65,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderResponse> getOrders(OrderStatus status) {
-        List<Order> orders = (status != null)
-                ? orderRepository.findByStatus(status)
-                : orderRepository.findAll();
-        return orders.stream().map(orderMapper::toResponse).toList();
+    public Page<OrderResponse> getOrders(OrderStatus status, Pageable pageable) {
+        Page<Order> page = (status != null)
+                ? orderRepository.findByStatus(status, pageable)
+                : orderRepository.findAll(pageable);
+        return page.map(orderMapper::toResponse);
     }
 
     @Override

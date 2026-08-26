@@ -7,11 +7,11 @@ import com.fleetops.orderdispatchservice.enums.DriverStatus;
 import com.fleetops.orderdispatchservice.service.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/drivers")
@@ -26,9 +26,11 @@ public class DriverController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DriverResponse>> getDrivers(
-            @RequestParam(required = false) DriverStatus status) {
-        return ResponseEntity.ok(driverService.getDrivers(status));
+    public ResponseEntity<Page<DriverResponse>> getDrivers(
+            @RequestParam(required = false) DriverStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(driverService.getDrivers(status, PageRequest.of(page, size)));
     }
 
     @PatchMapping("/{id}/status")
@@ -36,4 +38,5 @@ public class DriverController {
             @PathVariable Long id, @Valid @RequestBody DriverStatusUpdateRequest request) {
         return ResponseEntity.ok(driverService.updateDriverStatus(id, request));
     }
+
 }

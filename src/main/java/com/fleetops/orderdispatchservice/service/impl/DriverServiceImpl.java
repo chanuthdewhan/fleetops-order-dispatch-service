@@ -11,10 +11,10 @@ import com.fleetops.orderdispatchservice.repository.DriverRepository;
 import com.fleetops.orderdispatchservice.service.DriverService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,15 +34,6 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<DriverResponse> getDrivers(DriverStatus status) {
-        List<Driver> drivers = (status != null)
-                ? driverRepository.findByStatus(status)
-                : driverRepository.findAll();
-        return drivers.stream().map(driverMapper::toResponse).toList();
-    }
-
-    @Override
     @Transactional
     public DriverResponse updateDriverStatus(Long id, DriverStatusUpdateRequest request) {
         Driver driver = driverRepository.findById(id)
@@ -50,5 +41,13 @@ public class DriverServiceImpl implements DriverService {
         driver.setStatus(request.getStatus());
         log.info("Driver {} status updated to {}", id, request.getStatus());
         return driverMapper.toResponse(driver);
+    }
+
+    @Override
+    public Page<DriverResponse> getDrivers(DriverStatus status, Pageable pageable) {
+        Page<Driver> page = (status != null)
+                ? driverRepository.findByStatus(status, pageable)
+                : driverRepository.findAll(pageable);
+        return page.map(driverMapper::toResponse);
     }
 }

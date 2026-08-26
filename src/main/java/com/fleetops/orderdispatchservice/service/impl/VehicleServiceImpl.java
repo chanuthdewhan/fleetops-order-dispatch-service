@@ -11,10 +11,10 @@ import com.fleetops.orderdispatchservice.repository.VehicleRepository;
 import com.fleetops.orderdispatchservice.service.VehicleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,11 +35,11 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<VehicleResponse> getVehicles(VehicleStatus status) {
-        List<Vehicle> vehicles = (status != null)
-                ? vehicleRepository.findByStatus(status)
-                : vehicleRepository.findAll();
-        return vehicles.stream().map(vehicleMapper::toResponse).toList();
+    public Page<VehicleResponse> getVehicles(VehicleStatus status, Pageable pageable) {
+        Page<Vehicle> page = (status != null)
+                ? vehicleRepository.findByStatus(status, pageable)
+                : vehicleRepository.findAll(pageable);
+        return page.map(vehicleMapper::toResponse);
     }
 
     @Override

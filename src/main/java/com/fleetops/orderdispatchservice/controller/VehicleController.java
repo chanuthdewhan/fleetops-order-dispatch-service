@@ -7,11 +7,11 @@ import com.fleetops.orderdispatchservice.enums.VehicleStatus;
 import com.fleetops.orderdispatchservice.service.VehicleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/vehicles")
@@ -26,9 +26,11 @@ public class VehicleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VehicleResponse>> getVehicles(
-            @RequestParam(required = false) VehicleStatus status) {
-        return ResponseEntity.ok(vehicleService.getVehicles(status));
+    public ResponseEntity<Page<VehicleResponse>> getVehicles(
+            @RequestParam(required = false) VehicleStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(vehicleService.getVehicles(status, PageRequest.of(page, size)));
     }
 
     @PatchMapping("/{id}/status")
