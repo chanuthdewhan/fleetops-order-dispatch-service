@@ -10,4 +10,5 @@ public interface CustomerService {
     CustomerResponse getCustomerById(Long id);
     CustomerResponse updateCustomer(Long id, CustomerRequest request);
     Page<CustomerResponse> getCustomers(Pageable pageable);
+    void deleteCustomer(Long id);
 }

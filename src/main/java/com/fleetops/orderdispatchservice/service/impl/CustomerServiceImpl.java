@@ -3,6 +3,7 @@ package com.fleetops.orderdispatchservice.service.impl;
 import com.fleetops.orderdispatchservice.dto.customer.CustomerRequest;
 import com.fleetops.orderdispatchservice.dto.customer.CustomerResponse;
 import com.fleetops.orderdispatchservice.entity.Customer;
+import com.fleetops.orderdispatchservice.exception.InvalidStateTransitionException;
 import com.fleetops.orderdispatchservice.exception.ResourceNotFoundException;
 import com.fleetops.orderdispatchservice.mapper.CustomerMapper;
 import com.fleetops.orderdispatchservice.repository.CustomerRepository;
@@ -56,6 +57,20 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setAddress(request.getAddress());
         log.info("Customer updated: id={}", id);
         return customerMapper.toResponse(customer);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCustomer(Long id) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found: " + id));
+        try {
+            customerRepository.delete(customer);
+            customerRepository.flush(); // force the constraint check now, inside the try block
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new InvalidStateTransitionException(
+                    "Cannot delete customer " + id + " — they have existing orders");
+        }
     }
 
 }
