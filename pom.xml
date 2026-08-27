@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.fleetops</groupId>
     <artifactId>order-dispatch-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>order-dispatch-service</name>
     <description>order-dispatch-service</description>
     <url/>
